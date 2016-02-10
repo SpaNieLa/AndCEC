@@ -10,8 +10,10 @@ namespace AndCecConsole
     class Adb
     {
         private List<string> events;
+        private static System.Diagnostics.Process proc;
+        System.Diagnostics.ProcessStartInfo procStartInfo;
 
-
+        // Constructor and initializer for new adb connection
         public Adb(string address)
         {
             this.AdbShell("connect " + address);
@@ -19,36 +21,39 @@ namespace AndCecConsole
             this.events.Add("Init");
 
         }
-
+        // returns last received event (not needed atm)
         public string GetEvent()
         {
             if (this.events.Count == 0) return "empty";
 
             return this.events[this.events.Count -1];
         }
+        // Returns current list of unhandled events
         public List<string> GetEvents()
         {
             return this.events;
         }
+        // Cleaning prosedures
         public void Dispose()
         {
             this.AdbShell("disconnect");
             this.AdbShell("kill-server");
         }
+        // Remove seen events from queue
         public void Remove(int seen)
         {
             this.events.RemoveRange(0, seen);
         }
 
-
-        private string AdbShell(string adbInput)
+        // Initializing Adb connection and process info
+        private void AdbShell(string adbInput)
         {
             try
             {
                 string result = string.Empty;
                 string error = string.Empty;
                 string output = string.Empty;
-                System.Diagnostics.ProcessStartInfo procStartInfo = new System.Diagnostics.ProcessStartInfo(@"C:\androidSDK\platform-tools\adb.exe");
+                procStartInfo = new System.Diagnostics.ProcessStartInfo(@"C:\androidSDK\platform-tools\adb.exe");
 
 
                 procStartInfo.Arguments = adbInput;
@@ -56,60 +61,44 @@ namespace AndCecConsole
                 procStartInfo.RedirectStandardError = true;
                 procStartInfo.UseShellExecute = false;
                 procStartInfo.CreateNoWindow = true;
-                       //procStartInfo.WorkingDirectory = toolPath;
-                System.Diagnostics.Process proc = new System.Diagnostics.Process();
+
+                proc = new System.Diagnostics.Process();
                 proc.StartInfo = procStartInfo;
-                proc.Start();
-                // Get the output into a string
+                proc.Start();                
                 proc.WaitForExit();
-                result = proc.StandardOutput.ReadToEnd();
-                error = proc.StandardError.ReadToEnd();  //Some ADB outputs use this
-                if (result.Length > 1)
-                {
-                    output += result;
-                }
-                if (error.Length > 1)
-                {
-                    output += error;
-                }
-                return output;
-            }
+                            }
             catch (Exception objException)
             {
                 throw objException;
             }
         }
-        public void AdbShellGet()
+
+        // For reading events with extra thread started in main Program
+        public void AdbReadEvents()
         {
-            string adbInput = "shell getevent -l";
+
             try
             {
                 string result = string.Empty;
-                string error = string.Empty;
-                string output = string.Empty;
-                System.Diagnostics.ProcessStartInfo procStartInfo = new System.Diagnostics.ProcessStartInfo(@"C:\androidSDK\platform-tools\adb.exe");
+                //string error = string.Empty;
+                //string output = string.Empty;
 
-
-                procStartInfo.Arguments = adbInput;
-                procStartInfo.RedirectStandardOutput = true;
-                procStartInfo.RedirectStandardError = true;
-                procStartInfo.UseShellExecute = false;
-                procStartInfo.CreateNoWindow = true;
-                //procStartInfo.WorkingDirectory = toolPath;
-                System.Diagnostics.Process proc = new System.Diagnostics.Process();
+                procStartInfo.Arguments = "shell getevent -l";
+                
                 proc.StartInfo = procStartInfo;
                 proc.Start();
-                // Get the output into a string
-                //proc.WaitForExit();
+
                 while (true)
                 {
                     result = proc.StandardOutput.ReadLine();
                     if(!result.Equals("")) events.Add(result);
                     
+                    
                     //Program.sr = proc.StandardOutput;
                     //Console.WriteLine(result);
                 }
-                /*error = proc.StandardError.ReadLine();  //Some ADB outputs use this
+             /*
+                error = proc.StandardError.ReadLine();  //Some ADB outputs use this
                 if (result.Length > 1)
                 {
                     output += result;
@@ -117,7 +106,8 @@ namespace AndCecConsole
                 if (error.Length > 1)
                 {
                     output += error;
-                }*/
+                }
+             */
             }
             catch (Exception objException)
             {

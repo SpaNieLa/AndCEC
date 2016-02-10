@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Threading;
+using System.Runtime.InteropServices;
+
 
 
 namespace AndCecConsole
@@ -14,28 +16,46 @@ namespace AndCecConsole
 
     class Program
     {
+        // Handler for closing adb on exit
+        static ConsoleEventDelegate handler;
+        // Pinvoke
+        private delegate bool ConsoleEventDelegate(int eventType);
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern bool SetConsoleCtrlHandler(ConsoleEventDelegate callback, bool add);
 
+        // Adb and threading
+        private static Adb and1;
+        private static Thread eventing;
 
+        // Initial ignoring state
         static Boolean ignoring = true;
+        // Dictionary for qwerty mappings from layout.txt
         private static Dictionary<string, string> layout;
-        private static int pos_x = 32768;
-        private static int pos_y = 49151;
+        // Mouse start point range 0-65535
+        //private static int pos_x = 32768;
+        //private static int pos_y = 49151;
 
         static void Main(string[] args)
         {
+            // Exit handler
+            handler = new ConsoleEventDelegate(ConsoleEventCallback);
+            SetConsoleCtrlHandler(handler, true);
+
+
             // Connect to target Android
-            Adb and1 = new Adb("192.168.0.105");
+            and1 = new Adb("192.168.0.105");
 
             
             // Thread to get constant stream of event in target Android
-            Thread eventing = new Thread(new ThreadStart(and1.AdbShellGet));
+            eventing = new Thread(new ThreadStart(and1.AdbReadEvents));
             eventing.Start();
             while (!eventing.IsAlive) ;
             Thread.Sleep(10);
 
+            // Mapping keylayout
             InitLayout();
 
-
+            // Event receiving parts
             int lkm;
             string[] buf;
             while (eventing.IsAlive)
@@ -49,13 +69,8 @@ namespace AndCecConsole
                     ParseEvent(buf);
                     and1.Remove(lkm);   // Remove already handled events
                 }
+                else Thread.Sleep(1);   // Sleep if no new events. (cuts the high CPU usage)
             }
-
-
-            // Cleaning on exit
-            eventing.Abort();
-            and1.Dispose();
-
 
         }
 
@@ -73,31 +88,33 @@ namespace AndCecConsole
             switch (axis)
             {
                 case "REL_X":
-                    {/* // Mouse movement with relative information
+                    {   // Mouse movement with relative information
                         Console.WriteLine("Mouse move X " + axis);
                         VirtualMouse.Move((int)value*3, 0);
                         return;
-                        */
+                        /*
                         pos_x = pos_x + ((int)value * 90);
                         if (pos_x > 65535) pos_x = 65535;
                         if (pos_x < 0) pos_x = 0;
 
                         break;
+                        */
                     }
                 case "REL_Y":
-                    {/* // Mouse movement with relative information
+                    {    // Mouse movement with relative information
                         Console.WriteLine("Mouse move Y " + axis);
                         VirtualMouse.Move(0, (int)value*3);
                         return;
-                        */
+                        /*
                         pos_y = pos_y + ((int)value * 155);
                         if (pos_y > 65535) pos_y = 65535;
                         if (pos_y < 0) pos_y = 0;
                         break;
+                        */
                     }
             }
-            // New calculated position for pointer
-            VirtualMouse.MoveTo(pos_x, pos_y);
+            // New calculated position for pointer. (Not needed with relative info)
+            // VirtualMouse.MoveTo(pos_x, pos_y);
         }
 
         
@@ -235,5 +252,16 @@ namespace AndCecConsole
             }
         }
 
+        // exit handler for cleaning up
+        static bool ConsoleEventCallback(int eventType)
+        {
+            if (eventType == 2)
+            {
+                Console.WriteLine("Console window closing, death imminent");
+                eventing.Abort();
+                and1.Dispose();
+            }
+            return false;
+        }
     }
 }
