@@ -36,15 +36,14 @@ namespace AndCecConsole
         // Cleaning prosedures
         public void Dispose()
         {
-            this.AdbShell("disconnect");
+            //this.AdbShell("disconnect");  // disconnects anyway on next line :)
             this.AdbShell("kill-server");
         }
         // Remove seen events from queue
         public void Remove(int seen)
         {
-            this.events.RemoveRange(0, seen);
+            this.events.RemoveAt(seen);
         }
-
         // Initializing Adb connection and process info
         private void AdbShell(string adbInput)
         {

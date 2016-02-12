@@ -31,6 +31,7 @@ namespace AndCecConsole
         static Boolean ignoring = true;
         // Dictionary for qwerty mappings from layout.txt
         private static Dictionary<string, string> layout;
+        private static bool shift_state = false;
         // Mouse start point range 0-65535
         //private static int pos_x = 32768;
         //private static int pos_y = 49151;
@@ -41,6 +42,8 @@ namespace AndCecConsole
             handler = new ConsoleEventDelegate(ConsoleEventCallback);
             SetConsoleCtrlHandler(handler, true);
 
+            // Mapping keylayout
+            InitLayout();
 
             // Connect to target Android
             and1 = new Adb("192.168.0.105");
@@ -52,31 +55,29 @@ namespace AndCecConsole
             while (!eventing.IsAlive) ;
             Thread.Sleep(10);
 
-            // Mapping keylayout
-            InitLayout();
-
-            // Event receiving parts
-            int lkm;
-            string[] buf;
+            // event execution loop
             while (eventing.IsAlive)
             {
-                lkm = and1.GetEvents().Count;
-                buf = new string[lkm];
-                buf = and1.GetEvents().GetRange(0, lkm).ToArray();
-
-                if (lkm != 0)       // == New unread events since last round
+                try
                 {
-                    ParseEvent(buf);
-                    and1.Remove(lkm);   // Remove already handled events
+                    if (and1.GetEvents().Count() > 0)
+                    {
+                        ParseEvent(and1.GetEvents()[0]);
+                        and1.Remove(0);
+                    }
+                    else
+                    {
+                        Thread.Sleep(1);
+                    }
                 }
-                else Thread.Sleep(1);   // Sleep if no new events. (cuts the high CPU usage)
+                catch (NullReferenceException)
+                {
+                    Thread.Sleep(1);
+                    continue;
+                }
+
             }
-
         }
-
-        
-
-
 
 
         // Executes the matching keyevent from android on pc
@@ -89,7 +90,7 @@ namespace AndCecConsole
             {
                 case "REL_X":
                     {   // Mouse movement with relative information
-                        Console.WriteLine("Mouse move X " + axis);
+                        //Console.WriteLine("Mouse move X " + axis);
                         VirtualMouse.Move((int)value*3, 0);
                         return;
                         /*
@@ -102,7 +103,7 @@ namespace AndCecConsole
                     }
                 case "REL_Y":
                     {    // Mouse movement with relative information
-                        Console.WriteLine("Mouse move Y " + axis);
+                        //Console.WriteLine("Mouse move Y " + axis);
                         VirtualMouse.Move(0, (int)value*3);
                         return;
                         /*
@@ -121,10 +122,9 @@ namespace AndCecConsole
 
         //  Finds the pressed key from the captured event
         //  Returns string that contains pressed key in "KEY_*" format or "notFound if there is no Key event.
-        private static void ParseEvent(string[] evnt)
+        private static void ParseEvent(string x)
         {
-
-            foreach (string x in evnt)           // TODO Remove looping with better regex!
+            
             {
                 try
                 {
@@ -152,6 +152,14 @@ namespace AndCecConsole
         // Replay key event from android in computer
         private static void ReplayKey(string key, string state)
         {
+            if (key.Contains("KEY_LEFTSHIFT"))            // Changes the shift state
+            {
+                if (state.Contains("DOWN")) shift_state = true;
+                else shift_state = false;
+                return;
+            }
+
+
             if (state.Contains("DOWN") && key.Contains("KEY_")) return;     // At this point ignore "halfway"
 
             if (key.Contains("KEY_RED"))            // Changes the ignore state
@@ -163,7 +171,13 @@ namespace AndCecConsole
             }
             if (ignoring == true) return;          // Check if ignoring events!
 
-            if(layout.ContainsKey(key)) SendKeys.SendWait(layout[key]);
+            if (layout.ContainsKey(key))
+            {
+                if(shift_state == false) SendKeys.SendWait(layout[key]);
+                else SendKeys.SendWait(layout['+'+key]);
+                 
+                
+            }
 
             switch (key)
             {
