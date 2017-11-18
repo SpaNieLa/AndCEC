@@ -1,3 +1,9 @@
+KEY_GREEN	C:\Windows\System32\DisplaySwitch.exe
+KEY_YELLOW	D:\Program Files\Plex Media Player\PlexMediaPlayer.exe
+KEY_FN_B	{F11}
+CTRL_KEY_Y	C:\Users\paheansa\Desktop\Youtube on TV
+KEY_STOP	C:\Users\paheansa\Desktop\Youtube on TV
+KEY_SEC_RED	C:\Users\paheansa\Desktop\Youtube on TV
 KEY_A	a
 KEY_B	b
 KEY_C	c
@@ -24,6 +30,32 @@ KEY_V	v
 KEY_X	x
 KEY_Y	y
 KEY_Z	z
++KEY_A	A
++KEY_B	B
++KEY_C	C
++KEY_D	D
++KEY_E	E
++KEY_F	F
++KEY_G	G
++KEY_H	H
++KEY_I	I
++KEY_J	J
++KEY_K	K
++KEY_L	L
++KEY_M	M
++KEY_N	N
++KEY_O	O
++KEY_P	P
++KEY_Q	Q
++KEY_R	R
++KEY_S	S
++KEY_T	T
++KEY_U	U
++KEY_W	W
++KEY_V	V
++KEY_X	X
++KEY_Y	Y
++KEY_Z	Z
 KEY_1	1
 KEY_2	2
 KEY_3	3
@@ -35,6 +67,7 @@ KEY_8	8
 KEY_9	9
 KEY_0	0
 KEY_SEMICOLON	;
++KEY_SEMICOLON	:
 KEY_COMMA	,
 KEY_DOT	.
 KEY_RIGHTBRACE	]
@@ -48,6 +81,8 @@ KEY_KP8	{UP}
 KEY_KP2	{DOWN}
 KEY_KP4	{LEFT}
 KEY_KP6	{RIGHT}
+KEY_NEXT	+(N)
+KEY_PREVIOUS	+(P)
 KEY_UP	{UP}
 KEY_DOWN	{DOWN}
 KEY_LEFT	{LEFT}
@@ -67,6 +102,7 @@ KEY_KPDOT	{DEL}
 +KEY_EQUAL	{+}
 +KEY_APOSTROPHE	"
 +KEY_GRAVE	{~}
++KEY_1	!
 +KEY_2	@
 +KEY_3	#
 +KEY_4	$
@@ -75,3 +111,8 @@ KEY_KPDOT	{DEL}
 +KEY_8	*
 +KEY_9	{(}
 +KEY_0	{)}
+
+// DualShock mappings
+BTN_B	{ENTER}
+BTN_A	R
+BTN_C	C

@@ -26,6 +26,7 @@ namespace AndCecConsole
 
         public static void Move(int xDelta, int yDelta)
         {
+            Console.WriteLine("Mouse move X:" + xDelta +" Y:"+ yDelta);
             mouse_event(MOUSEEVENTF_MOVE, xDelta, yDelta, 0, 0);
         }
         public static void MoveTo(int x, int y)

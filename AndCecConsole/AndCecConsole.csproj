@@ -53,6 +53,7 @@
     <Compile Include="AppCommands.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UDP_Server.cs" />
     <Compile Include="VirtualMouse.cs" />
   </ItemGroup>
   <ItemGroup>

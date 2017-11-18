@@ -13,6 +13,8 @@ namespace AndCecConsole
         private static System.Diagnostics.Process proc;
         System.Diagnostics.ProcessStartInfo procStartInfo;
 
+      
+
         // Constructor and initializer for new adb connection
         public Adb(string address)
         {
@@ -52,7 +54,7 @@ namespace AndCecConsole
                 string result = string.Empty;
                 string error = string.Empty;
                 string output = string.Empty;
-                procStartInfo = new System.Diagnostics.ProcessStartInfo(@"C:\androidSDK\platform-tools\adb.exe");
+                procStartInfo = new System.Diagnostics.ProcessStartInfo(@"D:\Program Files\Android\SDK\platform-tools\adb.exe");
 
 
                 procStartInfo.Arguments = adbInput;
@@ -65,7 +67,8 @@ namespace AndCecConsole
                 proc.StartInfo = procStartInfo;
                 proc.Start();                
                 proc.WaitForExit();
-                            }
+            }
+
             catch (Exception objException)
             {
                 throw objException;
@@ -108,9 +111,10 @@ namespace AndCecConsole
                 }
              */
             }
-            catch (Exception objException)
+            catch (NullReferenceException e)
             {
-                throw objException;
+                //throw e;
+                
             }
         }
     }
