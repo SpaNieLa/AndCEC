@@ -7,7 +7,9 @@ F:\Media\Drives\OneDrive\Projects\AndCecConsole\AndCecConsole\obj\Debug\AndCecCo
 D:\Media\OneDrive\Projects\AndCecConsole\AndCecConsole\bin\Debug\AndCecConsole.exe.config
 D:\Media\OneDrive\Projects\AndCecConsole\AndCecConsole\bin\Debug\AndCecConsole.exe
 D:\Media\OneDrive\Projects\AndCecConsole\AndCecConsole\bin\Debug\AndCecConsole.pdb
-D:\Media\OneDrive\Projects\AndCecConsole\AndCecConsole\obj\Debug\AndCecConsole.csprojResolveAssemblyReference.cache
 D:\Media\OneDrive\Projects\AndCecConsole\AndCecConsole\obj\Debug\AndCecConsole.csproj.CoreCompileInputs.cache
 D:\Media\OneDrive\Projects\AndCecConsole\AndCecConsole\obj\Debug\AndCecConsole.exe
 D:\Media\OneDrive\Projects\AndCecConsole\AndCecConsole\obj\Debug\AndCecConsole.pdb
+D:\Media\OneDrive\Projects\AndCecConsole\AndCecConsole\obj\Debug\AndCecConsole.Properties.Resources.resources
+D:\Media\OneDrive\Projects\AndCecConsole\AndCecConsole\obj\Debug\AndCecConsole.csproj.GenerateResource.Cache
+D:\Media\OneDrive\Projects\AndCecConsole\AndCecConsole\obj\Debug\AndCecConsole.csprojResolveAssemblyReference.cache

@@ -2,6 +2,7 @@
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
+using System.Configuration;
 using System.Text;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
@@ -619,17 +620,9 @@ namespace AndCecConsole
         {
             layout = new Dictionary<string, string>();
 
-            foreach (string s in File.ReadLines(@"layout.txt"))
+            foreach (string key in ConfigurationManager.AppSettings.AllKeys)
             {
-                try
-                {
-                    layout.Add(Regex.Split(s, @"\t")[0], Regex.Split(s, @"\t")[1]);
-                }
-                catch (Exception e)
-                {
-                    // Not valid line in layout file, propably comment etc..
-                    
-                }
+                layout.Add(key, ConfigurationManager.AppSettings[key]);  
             }
         }
 
