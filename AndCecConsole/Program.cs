@@ -33,11 +33,10 @@ namespace AndCecConsole
         private static string address = "192.168.0.105";
         private static bool running = true;
         private static bool is_online;
-        private static Adb and1;
+      
         private static UDP_Server server;
         private static Thread eventing;
-        
-
+                
         // Initial ignoring state
         static Boolean ignoring = true;
         // Dictionary for qwerty mappings from layout.txt
@@ -70,11 +69,7 @@ namespace AndCecConsole
 
             UpdateStatus();
             
-
-            // Connect to target Android
-            and1 = new Adb(address);
-
-            //server = new UDP_Server(9899);
+            server = new UDP_Server(9899);
 
             // Rightclick regognizition timer. Time to hold to establish mouse rightclick
             // TODO Convert to universal secondary button function timer
@@ -115,11 +110,7 @@ namespace AndCecConsole
         {
             while (running == true)
             {
-                and1.Dispose();
-                and1 = new Adb(address);
-
-                eventing = new Thread(new ThreadStart(and1.AdbReadEvents));
-                //eventing = new Thread(new ThreadStart(server.RunServer));
+                eventing = new Thread(new ThreadStart(server.RunServer));
                 eventing.Start();
                 while (!eventing.IsAlive) ;
                 Thread.Sleep(2000);
@@ -129,17 +120,12 @@ namespace AndCecConsole
                 while (eventing.IsAlive)
                 {
                     try
-                    {
-                        if (and1.GetEvents().Count() > 0)
-                        {
-                            ParseEvent(and1.GetEvents()[0]);
-                            and1.Remove(0);
-                        }/*
+                    {                 
                         if (server.GetEvents().Count() > 0)
                         {
                             ParseEvent(server.GetEvents()[0]);
                             server.Remove(0);
-                        }*/
+                        }
                         else
                         {
                             Thread.Sleep(1);
@@ -633,7 +619,6 @@ namespace AndCecConsole
             {
                 Console.WriteLine("Console window closing, death imminent");
                 eventing.Abort();
-                and1.Dispose();
             }
             return false;
         }
